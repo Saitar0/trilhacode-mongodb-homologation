@@ -1,7 +1,7 @@
 {
   "format_version": 1,
   "transport": {
-    "enabled": false,
+    "enabled": true,
     "executor_repository": "Saitar0/trilhacode-mongodb-homologation",
     "release_tag": "editorial-generations-mongodb7-f049d3ebdb5a",
     "asset_name": "editorial-generations-mongodb7-f049d3ebdb5aaa5ee099dc188196500e53a55e41.zip"
