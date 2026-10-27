@@ -18,6 +18,19 @@ O job só é executado quando o dispatch usa `main` do repositório executor. Di
 
 O template não contém o pacote da aplicação, credenciais, secrets, nem mecanismo de publicação. O `GITHUB_TOKEN` efêmero é utilizado somente pela CLI `gh` para baixar um asset do próprio repositório com `contents: read`; não é gravado no checkout.
 
+## Pacote atualmente fixado
+
+- Origem: `Saitar0/trilhacodeprod` no commit `f049d3ebdb5aaa5ee099dc188196500e53a55e41`.
+- Release: `editorial-generations-mongodb7-f049d3ebdb5a`.
+- Asset: `editorial-generations-mongodb7-f049d3ebdb5aaa5ee099dc188196500e53a55e41.zip`.
+- SHA-256 externo: `16f13dccdc3b08026bb88149a46024a483f5ee8c68eeee77e0466c5834222dc6`.
+- Hash de conteúdo: `30fc9ed06aa73eca17c794484bf1b08a47d9b7789e88d1fd73eaa52a0d05ee61`.
+- `transport.enabled` permanece `false`; esta publicação não habilita execução.
+
+## Orçamento do workflow
+
+O job tem limite de 45 min. Checkout, setup Python e verificação/extração têm 1 min cada; a execução principal tem limite de 36 min; o cleanup externo tem 5 min. A execução do pacote limita `docker compose up` a 32 min e reserva até 3 min para cleanup interno. Assim, a soma máxima configurada deixa 1 min de margem do job e reserva a janela de cleanup.
+
 ## Integridade e origem
 
 O builder lê blobs de um commit Git exato e usa allowlist estrita. ZIP, manifesto e arquivos têm ordenação, timestamps e modos normalizados. O executor compara o SHA-256 do arquivo com o valor independente no lock antes de aceitar o manifesto. Isso prova que os bytes correspondem ao valor aprovado no lock; **não prova por si só a origem confiável** e não é assinatura digital. A origem depende da revisão humana e das permissões/proteções do repositório executor.
@@ -30,7 +43,7 @@ O builder lê blobs de um commit Git exato e usa allowlist estrita. ZIP, manifes
 
 ## Isolamento da execução
 
-O pacote mantém `mongo:7` standalone, rede Compose interna, tmpfs para `/data/db`, nenhuma porta publicada e nenhum volume persistente. O runner cria projeto e senha aleatórios; a senha é mascarada no log antes de ser exportada ao ambiente. O script de execução recusa configuração Mongo externa, valida contexto Docker e Compose, e o cleanup verifica contexto, projeto e labels antes de remover recursos delimitados. Não há `docker system prune`, socket montado no container, SSH, deploy, publicação de imagens ou chamadas à aplicação.
+O pacote mantém `mongo:7` standalone, rede Compose interna, tmpfs para `/data/db`, nenhuma porta publicada e nenhum volume persistente. O runner cria projeto e senha aleatórios; a senha é mascarada no log antes de ser exportada ao ambiente. O script de execução recusa configuração Mongo externa, valida contexto Docker e Compose, e o cleanup verifica contexto, projeto e labels antes de remover recursos delimitados. O executor supervisiona cada teste integrado em processo isolado, aplica limites de inatividade e deadline e reserva tempo próprio para cleanup. Falhas mantêm evidências temporárias e apresentam detalhes redigidos. Não há `docker system prune`, socket montado no container, SSH, deploy, publicação de imagens ou chamadas à aplicação.
 
 ## Verificação local
 

@@ -24,17 +24,20 @@ jobs:
       contents: read
     steps:
       - name: Check out executor configuration without persisted credentials
+        timeout-minutes: 1
         uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
         with:
           persist-credentials: false
 
       - name: Set up Python for package verification
+        timeout-minutes: 1
         uses: actions/setup-python@5fda3b95a4ea91299a34e894583c3862153e4b97 # v7.0.0
         with:
           python-version: "3.11"
 
       - name: Verify fixed release package and extract
         id: package
+        timeout-minutes: 1
         env:
           GH_TOKEN: ${{ github.token }}
           GITHUB_REPOSITORY: ${{ github.repository }}
@@ -45,10 +48,12 @@ jobs:
 
       - name: Run verified package against disposable MongoDB 7
         id: run
+        timeout-minutes: 36
         run: bash "$RUNNER_TEMP/editorial-generations-bundle/ops/editorial-generations/run-ci.sh"
 
       - name: Clean only this run's resources and temporary package
         if: always()
+        timeout-minutes: 5
         env:
           EDITORIAL_POC_RUN_ID: ${{ steps.run.outputs.run_id }}
           EDITORIAL_POC_PROJECT: ${{ steps.run.outputs.project }}

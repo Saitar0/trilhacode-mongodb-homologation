@@ -10,7 +10,12 @@ import subprocess
 import sys
 from pathlib import Path
 
-from bundle_security import MAX_ARCHIVE_BYTES, BundleError, extract_verified
+from bundle_security import (
+    MAX_ARCHIVE_BYTES,
+    BundleError,
+    extract_verified,
+    verify_archive,
+)
 
 SOURCE_SHA = re.compile(r"[0-9a-f]{40,64}\Z")
 HASH = re.compile(r"[0-9a-f]{64}\Z")
@@ -38,10 +43,12 @@ def load_lock(path: Path) -> dict:
         raise BundleError("Versão de lock não suportada")
     package = lock["package"]
     transport = lock["transport"]
-    if set(package) != {"source_repository", "source_sha", "sha256", "python", "pymongo", "mongodb_major"}:
+    if set(package) != {"source_repository", "source_sha", "sha256", "python", "pymongo", "mongodb_major", "format_version"}:
         raise BundleError("Campos de pacote inesperados")
     if set(transport) != {"enabled", "executor_repository", "release_tag", "asset_name"}:
         raise BundleError("Campos de transporte inesperados")
+    if type(package.get("format_version")) is not int or package["format_version"] != 1:
+        raise BundleError("Versão de formato do pacote não suportada")
     if type(transport["enabled"]) is not bool or not all(
         isinstance(transport[field], str)
         for field in ("executor_repository", "release_tag", "asset_name")
@@ -65,6 +72,7 @@ def load_lock(path: Path) -> dict:
         "python": "3.11",
         "pymongo": "4.18.2",
         "mongodb_major": 7,
+        "format_version": 1,
     }:
         raise BundleError("Versões de runtime divergem do contrato")
     return lock
@@ -134,6 +142,13 @@ def main() -> int:
         if archive_path.stat().st_size > MAX_ARCHIVE_BYTES:
             raise BundleError("Asset baixado excede o limite do pacote")
         archive_bytes = archive_path.read_bytes()
+        manifest, _verified_files = verify_archive(
+            archive_bytes,
+            expected_archive_sha256=lock["package"]["sha256"],
+            expected_source_sha=lock["package"]["source_sha"],
+        )
+        if manifest.get("format_version") != lock["package"]["format_version"]:
+            raise BundleError("Versão do formato do pacote diverge do lock")
         manifest = extract_verified(
             archive_bytes,
             args.destination,
