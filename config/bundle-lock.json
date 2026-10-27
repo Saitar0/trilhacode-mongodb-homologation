@@ -1,0 +1,17 @@
+{
+  "format_version": 1,
+  "transport": {
+    "enabled": false,
+    "executor_repository": "Saitar0/trilhacode-mongodb-homologation",
+    "release_tag": "editorial-generations-mongodb7-285c1ddaada3",
+    "asset_name": "editorial-generations-mongodb7-285c1ddaada3dd245ca335e266f1ce72ed803d1d.zip"
+  },
+  "package": {
+    "source_repository": "Saitar0/trilhacodeprod",
+    "source_sha": "285c1ddaada3dd245ca335e266f1ce72ed803d1d",
+    "sha256": "7273fc70679317fa8a5a5801aab0975a9403b237fd7f255bae5680fee146d0a6",
+    "python": "3.11",
+    "pymongo": "4.18.2",
+    "mongodb_major": 7
+  }
+}
