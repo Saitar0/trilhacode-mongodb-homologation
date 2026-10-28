@@ -3,13 +3,13 @@
   "transport": {
     "enabled": false,
     "executor_repository": "Saitar0/trilhacode-mongodb-homologation",
-    "release_tag": "editorial-generations-mongodb7-f049d3ebdb5a",
-    "asset_name": "editorial-generations-mongodb7-f049d3ebdb5aaa5ee099dc188196500e53a55e41.zip"
+    "release_tag": "editorial-generations-mongodb7-8a087fd5baa9",
+    "asset_name": "editorial-generations-mongodb7-8a087fd5baa9e2eaa98bc1d2ed52b4a60f8c7036.zip"
   },
   "package": {
     "source_repository": "Saitar0/trilhacodeprod",
-    "source_sha": "f049d3ebdb5aaa5ee099dc188196500e53a55e41",
-    "sha256": "16f13dccdc3b08026bb88149a46024a483f5ee8c68eeee77e0466c5834222dc6",
+    "source_sha": "8a087fd5baa9e2eaa98bc1d2ed52b4a60f8c7036",
+    "sha256": "7094bd74b42faebc5620bcad1ac227d46b510fa2a048dfad330a0d064fcc28a8",
     "python": "3.11",
     "pymongo": "4.18.2",
     "mongodb_major": 7,

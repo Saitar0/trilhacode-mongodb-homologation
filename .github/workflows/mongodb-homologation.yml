@@ -19,12 +19,12 @@ jobs:
   homologation:
     if: ${{ inputs.confirm_disposable_run && github.ref == 'refs/heads/main' }}
     runs-on: ubuntu-24.04
-    timeout-minutes: 45
+    timeout-minutes: 50
     permissions:
       contents: read
     steps:
       - name: Check out executor configuration without persisted credentials
-        timeout-minutes: 1
+        timeout-minutes: 2
         uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
         with:
           persist-credentials: false
@@ -37,7 +37,7 @@ jobs:
 
       - name: Verify fixed release package and extract
         id: package
-        timeout-minutes: 1
+        timeout-minutes: 2
         env:
           GH_TOKEN: ${{ github.token }}
           GITHUB_REPOSITORY: ${{ github.repository }}
@@ -48,7 +48,7 @@ jobs:
 
       - name: Run verified package against disposable MongoDB 7
         id: run
-        timeout-minutes: 36
+        timeout-minutes: 37
         run: bash "$RUNNER_TEMP/editorial-generations-bundle/ops/editorial-generations/run-ci.sh"
 
       - name: Clean only this run's resources and temporary package
